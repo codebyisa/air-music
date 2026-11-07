@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="description" content="AIR MUSIC — toque piano, violão e bateria no ar, só com as mãos e a webcam.">
+  <meta name="theme-color" content="#0a0a0c">
+  <title>AIR MUSIC — toque no ar</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body data-instrument="piano" data-camera="off">
+
+  <!-- ***** Ícones (sprite SVG) ***** -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="i-camera" viewBox="0 0 24 24">
+      <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5h7A2.5 2.5 0 0 1 16 7.5v9a2.5 2.5 0 0 1-2.5 2.5h-7A2.5 2.5 0 0 1 4 16.5v-9zM16 10l4-2.5v9L16 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-eye" viewBox="0 0 24 24">
+      <path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="1.8"/>
+      <circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/>
+    </symbol>
+    <symbol id="i-eye-off" viewBox="0 0 24 24">
+      <path d="M3 3l18 18M10.6 5.6A9.6 9.6 0 0 1 12 5.5C18 5.5 21.5 12 21.5 12a17 17 0 0 1-3.1 3.9M6.6 6.6C3.9 8.4 2.5 12 2.5 12S6 18.5 12 18.5c1.8 0 3.3-.5 4.6-1.3M9.9 9.9a3 3 0 0 0 4.2 4.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-record" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="6"/>
+    </symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24">
+      <rect x="7" y="7" width="10" height="10" rx="2"/>
+    </symbol>
+    <symbol id="i-play" viewBox="0 0 24 24">
+      <path d="M8 5.14v13.72a1 1 0 0 0 1.52.86l11.04-6.86a1 1 0 0 0 0-1.72L9.52 4.28A1 1 0 0 0 8 5.14z"/>
+    </symbol>
+    <symbol id="i-volume" viewBox="0 0 24 24">
+      <path d="M4 9.5h3.2L11.6 6c.6-.5 1.4 0 1.4.7v10.6c0 .8-.8 1.2-1.4.7L7.2 14.5H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1z"/>
+      <path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-minus" viewBox="0 0 24 24">
+      <path d="M6 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-plus" viewBox="0 0 24 24">
+      <path d="M12 6v12M6 12h12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24">
+      <path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-tap" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="3.5"/>
+      <circle cx="12" cy="12" r="8" fill="none" stroke="currentColor" stroke-width="1.6" opacity=".5"/>
+    </symbol>
+    <symbol id="i-mute" viewBox="0 0 24 24">
+      <path d="M4 9.5h3.2L11.6 6c.6-.5 1.4 0 1.4.7v10.6c0 .8-.8 1.2-1.4.7L7.2 14.5H4a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1z"/>
+      <path d="M16.5 9.5l5 5M21.5 9.5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="i-download" viewBox="0 0 24 24">
+      <path d="M12 4v11M7.5 10.5 12 15l4.5-4.5M5 19h14" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-share" viewBox="0 0 24 24">
+      <path d="M12 3v12M7.5 7.5 12 3l4.5 4.5M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+    <symbol id="i-close" viewBox="0 0 24 24">
+      <path d="M6 6l12 12M18 6 6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </symbol>
+  </svg>
+
+  <!-- ***** Topo ***** -->
+  <header class="topbar">
+    <a href="#" class="brand" aria-label="AIR MUSIC — início">
+      <span class="brand-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
+      AIR MUSIC
+    </a>
+
+    <!-- Instrumentos -->
+    <nav class="instruments" role="tablist" aria-label="Escolha o instrumento">
+      <button type="button" role="tab" data-instrument="piano" aria-selected="true">
+        <span aria-hidden="true">🎹</span> Piano
+      </button>
+      <button type="button" role="tab" data-instrument="guitar" aria-selected="false">
+        <span aria-hidden="true">🎸</span> Violão
+      </button>
+      <button type="button" role="tab" data-instrument="drums" aria-selected="false">
+        <span aria-hidden="true">🥁</span> Batidas
+      </button>
+    </nav>
+
+    <div class="topbar-actions">
+      <button class="round-btn" id="toggleVideo" type="button" aria-pressed="false" aria-label="Esconder o vídeo" title="Esconder o vídeo">
+        <svg class="ico"><use href="#i-eye"/></svg>
+      </button>
+      <button class="rec-btn" id="recordBtn" type="button" aria-pressed="false">
+        <svg class="ico"><use href="#i-record"/></svg>
+        <span id="recordLabel">Gravar</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="app">
+
+    <!-- Camadas (loop pedal) -->
+    <section class="panel panel-layers" aria-label="Camadas">
+      <div class="control">
+        <span class="control-label">Camadas</span>
+        <div class="layers-controls">
+          <button class="layer-rec-btn" id="layerRec" type="button" aria-pressed="false">
+            <i aria-hidden="true"></i>
+            <span id="layerRecLabel">Gravar camada</span>
+          </button>
+          <button class="round-btn round-btn-sm" id="layersPlay" type="button" aria-pressed="false" aria-label="Tocar as camadas" title="Tocar as camadas">
+            <svg class="ico"><use href="#i-play"/></svg>
+          </button>
+          <select class="select" id="layerBars" aria-label="Tamanho do loop, em compassos" title="Tamanho do loop, em compassos">
+            <option value="1">1 comp.</option>
+            <option value="2">2 comp.</option>
+            <option value="4">4 comp.</option>
+          </select>
+          <button class="round-btn round-btn-sm" id="layersClear" type="button" aria-label="Apagar todas as camadas" title="Apagar todas as camadas">
+            <svg class="ico"><use href="#i-trash"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <ul class="layers" id="layersList" aria-label="Camadas gravadas"></ul>
+
+      <p class="panel-hint" id="layersHint">Grave uma camada, troque de instrumento e grave outra por cima. Antes de gravar, o metrônomo conta 4 tempos.</p>
+    </section>
+
+    <!-- =====================================================
+         PALCO: câmera + instrumento + pontos das mãos
+         ===================================================== -->
+    <section class="stage" id="stage" aria-label="Palco">
+      <video class="stage-video" id="video" playsinline muted></video>
+
+      <!-- Instrumentos desenhados sobre o vídeo -->
+      <div class="overlay overlay-piano" id="pianoOverlay" aria-hidden="true"></div>
+
+      <div class="overlay overlay-guitar" id="guitarOverlay" aria-hidden="true">
+        <div class="guitar-chord" id="guitarChord">
+          <span class="guitar-chord-name" id="chordName">—</span>
+          <span class="guitar-chord-hint" id="chordHint">Levante os dedos da mão esquerda</span>
+        </div>
+        <div class="guitar-strings" id="guitarStrings"></div>
+      </div>
+
+      <div class="overlay overlay-drums" id="drumsOverlay" aria-hidden="true"></div>
+
+      <!-- Pontos dos dedos e das mãos -->
+      <canvas class="stage-hands" id="handsCanvas" aria-hidden="true"></canvas>
+
+      <!-- Situação da câmera/detector -->
+      <span class="stage-status" id="stageStatus" hidden>
+        <i aria-hidden="true"></i>
+        <span id="stageStatusText">Procurando suas mãos…</span>
+      </span>
+
+      <!-- Camada: contagem e gravação -->
+      <div class="stage-loop" id="stageLoop" hidden>
+        <span class="stage-loop-count" id="stageLoopCount"></span>
+        <span class="stage-loop-pill">
+          <i aria-hidden="true"></i>
+          <span id="stageLoopText">Prepare…</span>
+          <span class="stage-loop-bar" aria-hidden="true"><b id="stageLoopBar"></b></span>
+        </span>
+      </div>
+
+      <!-- Gravando -->
+      <span class="stage-rec" id="stageRec" hidden>
+        <i aria-hidden="true"></i>
+        <span id="recTime">00:00</span>
+      </span>
+
+      <!-- Tela inicial: ligar a câmera -->
+      <div class="stage-start" id="startScreen">
+        <h1 class="start-title">Toque <em>no ar.</em></h1>
+        <p class="start-lead">Piano, violão e bateria, usando só as mãos e a câmera.</p>
+
+        <button class="primary-btn" id="startBtn" type="button">
+          <svg class="ico"><use href="#i-camera"/></svg>
+          Ligar câmera e começar
+        </button>
+
+        <ul class="start-tips">
+          <li>💡 Fique num lugar bem iluminado</li>
+          <li>📏 A uns 60 cm a 1 m da câmera</li>
+          <li>🔊 Aumente o volume</li>
+        </ul>
+
+        <p class="start-privacy">O vídeo é processado no seu navegador e nunca sai do seu computador.</p>
+        <p class="start-error" id="startError" role="alert"></p>
+      </div>
+
+      <!-- Carregando -->
+      <div class="stage-loading" id="loadingScreen" hidden>
+        <span class="spinner" aria-hidden="true"></span>
+        <span id="loadingText">Preparando os instrumentos…</span>
+      </div>
+    </section>
+
+    <!-- =====================================================
+         CONTROLES (mudam conforme o instrumento)
+         ===================================================== -->
+    <section class="dock" aria-label="Controles">
+
+      <!-- Piano -->
+      <div class="panel" data-panel="piano">
+        <div class="control">
+          <span class="control-label">Escala</span>
+          <div class="segmented" id="pianoScale" role="radiogroup" aria-label="Escala do piano">
+            <button type="button" role="radio" data-scale="pentatonic" aria-checked="true">Sempre soa bem</button>
+            <button type="button" role="radio" data-scale="major" aria-checked="false">Maior</button>
+            <button type="button" role="radio" data-scale="chromatic" aria-checked="false">Todas as notas</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <span class="control-label">Oitava</span>
+          <div class="stepper">
+            <button class="round-btn round-btn-sm" id="octaveDown" type="button" aria-label="Oitava abaixo"><svg class="ico"><use href="#i-minus"/></svg></button>
+            <output class="stepper-value" id="octaveValue">4</output>
+            <button class="round-btn round-btn-sm" id="octaveUp" type="button" aria-label="Oitava acima"><svg class="ico"><use href="#i-plus"/></svg></button>
+          </div>
+        </div>
+
+        <p class="panel-hint">Desça a ponta do dedo sobre uma tecla para tocar. Dá pra usar vários dedos ao mesmo tempo.</p>
+      </div>
+
+      <!-- Violão -->
+      <div class="panel" data-panel="guitar" hidden>
+        <div class="control control-wide">
+          <span class="control-label">Acordes · mão esquerda</span>
+          <ol class="chord-legend" id="chordLegend"></ol>
+        </div>
+
+        <p class="panel-hint">Com a mão esquerda, levante dedos para escolher o acorde. Com a direita, passe a mão pelas cordas, pra baixo ou pra cima.</p>
+      </div>
+
+      <!-- Batidas -->
+      <div class="panel" data-panel="drums" hidden>
+        <div class="control">
+          <span class="control-label">Modo</span>
+          <div class="segmented" id="drumMode" role="radiogroup" aria-label="Modo das batidas">
+            <button type="button" role="radio" data-mode="pads" aria-checked="true">Tocar</button>
+            <button type="button" role="radio" data-mode="sequencer" aria-checked="false">Sequenciador</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <span class="control-label">Kit</span>
+          <div class="segmented" id="drumKit" role="radiogroup" aria-label="Kit de bateria">
+            <button type="button" role="radio" data-kit="classic" aria-checked="true">Clássico</button>
+            <button type="button" role="radio" data-kit="techno" aria-checked="false">Hard techno</button>
+            <button type="button" role="radio" data-kit="funk" aria-checked="false">Funk carioca</button>
+            <button type="button" role="radio" data-kit="house" aria-checked="false">House</button>
+          </div>
+        </div>
+
+        <div class="control">
+          <span class="control-label">BPM</span>
+          <div class="bpm">
+            <input type="range" class="range" id="bpmRange" min="60" max="180" step="1" value="100" aria-label="Batidas por minuto">
+            <output class="bpm-value" id="bpmValue">100</output>
+            <button class="ghost-btn ghost-btn-sm" id="tapTempo" type="button">
+              <svg class="ico"><use href="#i-tap"/></svg>
+              Tap
+            </button>
+          </div>
+        </div>
+
+        <div class="control">
+          <span class="control-label">Loop</span>
+          <div class="loop-controls">
+            <button class="primary-btn primary-btn-sm" id="loopPlay" type="button" aria-pressed="false">
+              <svg class="ico"><use href="#i-play"/></svg>
+              <span>Tocar loop</span>
+            </button>
+            <select class="select" id="patternPreset" aria-label="Batidas prontas">
+              <option value="">Batidas prontas</option>
+              <optgroup label="Com o kit atual">
+                <option value="basic">Básica</option>
+                <option value="pop">Pop</option>
+                <option value="funk">Groove (funk americano)</option>
+                <option value="hiphop">Hip-hop</option>
+                <option value="reggaeton">Reggaeton</option>
+              </optgroup>
+              <optgroup label="Estilos (trocam o kit e o BPM)">
+                <option value="techno">Hard techno · 150</option>
+                <option value="funkbr">Funk carioca · 130</option>
+                <option value="house">House · 124</option>
+              </optgroup>
+            </select>
+            <button class="round-btn round-btn-sm" id="patternClear" type="button" aria-label="Limpar sequência" title="Limpar sequência">
+              <svg class="ico"><use href="#i-trash"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Grade de 16 passos (gerada pelo JS) -->
+        <div class="sequencer" id="sequencer" aria-label="Sequenciador de 16 passos"></div>
+
+        <p class="panel-hint" id="drumsHint">Bata no ar sobre os pads para tocar. No sequenciador, toque nos quadradinhos (com o dedo no ar ou o mouse) para montar o loop.</p>
+      </div>
+
+      <!-- Sempre visível -->
+      <div class="panel panel-global">
+        <div class="control">
+          <span class="control-label">Volume</span>
+          <div class="volume">
+            <svg class="ico"><use href="#i-volume"/></svg>
+            <input type="range" class="range" id="volumeRange" min="0" max="1" step="0.01" value="0.8" aria-label="Volume geral">
+          </div>
+        </div>
+
+        <div class="control">
+          <span class="control-label">Sensibilidade · <output id="sensValue">Normal</output></span>
+          <div class="sens">
+            <small>Firme</small>
+            <input type="range" class="range" id="sensRange" min="1" max="5" step="1" value="3" aria-label="Sensibilidade dos gestos">
+            <small>Leve</small>
+          </div>
+        </div>
+
+        <div class="control">
+          <span class="control-label">Gravar</span>
+          <div class="segmented" id="recordMode" role="radiogroup" aria-label="O que gravar">
+            <button type="button" role="radio" data-rec="video" aria-checked="true">Vídeo</button>
+            <button type="button" role="radio" data-rec="audio" aria-checked="false">Só áudio</button>
+          </div>
+        </div>
+
+        <label class="switch">
+          <input type="checkbox" id="metronomeToggle">
+          <span class="switch-track" aria-hidden="true"></span>
+          Metrônomo
+        </label>
+
+        <label class="switch">
+          <input type="checkbox" id="loopUnder" checked>
+          <span class="switch-track" aria-hidden="true"></span>
+          Manter o loop tocando nos outros instrumentos
+        </label>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ***** Rodapé ***** -->
+  <footer class="footer">
+    <p>Detecção das mãos: MediaPipe (Google) · Som: Tone.js · Piano: Salamander Grand Piano · Violão: tonejs-instruments</p>
+    <p>#05 da série 100 sites · <span id="footerYear">2026</span></p>
+  </footer>
+
+  <!-- ***** Resultado da gravação ***** -->
+  <div class="sheet" id="recSheet" role="dialog" aria-modal="true" aria-labelledby="recSheetTitle" hidden>
+    <div class="sheet-backdrop" data-close></div>
+    <div class="sheet-card">
+      <header class="sheet-head">
+        <h2 class="sheet-title" id="recSheetTitle">Sua gravação 🎧</h2>
+        <button class="round-btn round-btn-sm" type="button" data-close aria-label="Fechar">
+          <svg class="ico"><use href="#i-close"/></svg>
+        </button>
+      </header>
+
+      <div class="sheet-media" id="recMedia"></div>
+      <p class="sheet-meta" id="recMeta"></p>
+
+      <div class="sheet-actions">
+        <a class="primary-btn primary-btn-sm" id="recDownload" href="#" download>
+          <svg class="ico"><use href="#i-download"/></svg>
+          Baixar
+        </a>
+        <button class="ghost-btn" id="recShare" type="button" hidden>
+          <svg class="ico"><use href="#i-share"/></svg>
+          Compartilhar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ***** Avisos ***** -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.49/Tone.js"></script>
+  <script type="module" src="script.js"></script>
+</body>
+</html>
